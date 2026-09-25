@@ -1,0 +1,122 @@
+ЛИЦЕНЗИОННОЕ СОГЛАШЕНИЕ С КОНЕЧНЫМ ПОЛЬЗОВАТЕЛЕМ (EULA)
+Эфир — бесплатное программное обеспечение с закрытым исходным кодом
+
+Copyright (c) 2026 Red_Artem39. Все права защищены.
+
+Устанавливая, копируя или используя программу «Эфир» (далее — «Программа»),
+вы принимаете условия этого соглашения. Если вы не согласны с ними, не
+устанавливайте и не используйте Программу.
+
+1. Предоставление лицензии
+   Правообладатель бесплатно предоставляет вам неисключительную,
+   непередаваемую, отзывную лицензию на установку и использование Программы
+   в личных некоммерческих целях на любом количестве ваших устройств.
+
+2. Распространение
+   Вы можете бесплатно передавать другим людям неизменённый установщик
+   Программы, полученный из официального источника. Запрещается продавать
+   Программу, брать плату за её передачу, распространять её изменённые
+   версии или включать её в другие продукты без письменного разрешения
+   правообладателя.
+
+3. Ограничения
+   Запрещается:
+   а) декомпилировать, дизассемблировать, извлекать исходный код или иным
+      образом восстанавливать устройство Программы, кроме случаев, прямо
+      разрешённых применимым законом;
+   б) изменять Программу, создавать на её основе производные работы;
+   в) удалять или изменять уведомления об авторских правах;
+   г) использовать Программу для нарушения закона или прав других людей.
+
+4. Исходный код
+   Исходный код Программы является закрытым и не предоставляется. Это
+   соглашение не даёт никаких прав на исходный код.
+
+5. Права собственности
+   Программа, включая её код, интерфейс и документацию, принадлежит
+   правообладателю. Вы получаете только право использования по этому
+   соглашению; все прочие права сохраняются за правообладателем.
+
+6. Сторонние компоненты
+   Программа содержит компоненты с открытым исходным кодом (в том числе
+   Electron, Chromium, React, mediasoup), которые распространяются по своим
+   лицензиям. Тексты этих лицензий поставляются вместе с Программой (файлы
+   LICENSE.electron.txt и LICENSES.chromium.html в папке установки). По
+   отношению к этим компонентам их лицензии имеют приоритет над этим
+   соглашением.
+
+7. Данные
+   Программа подключается к серверу, адрес которого задан при сборке, и
+   передаёт ему то, что вы отправляете: сообщения, файлы, голос и
+   изображение экрана при демонстрации. Сервером управляет его владелец.
+
+8. Обновления
+   Программа может проверять наличие новых версий и предлагать их
+   установить. Обновления распространяются на тех же условиях.
+
+9. Отказ от гарантий
+   ПРОГРАММА ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНЫХ ИЛИ
+   ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ ГАРАНТИИ ПРИГОДНОСТИ ДЛЯ ОПРЕДЕЛЁННОЙ ЦЕЛИ И
+   ОТСУТСТВИЯ НАРУШЕНИЙ ПРАВ.
+
+10. Ограничение ответственности
+   НИ ПРИ КАКИХ ОБСТОЯТЕЛЬСТВАХ ПРАВООБЛАДАТЕЛЬ НЕ НЕСЁТ ОТВЕТСТВЕННОСТИ ЗА
+   ЛЮБОЙ УЩЕРБ, ВКЛЮЧАЯ ПОТЕРЮ ДАННЫХ ИЛИ ПРИБЫЛИ, ВОЗНИКШИЙ В СВЯЗИ С
+   ИСПОЛЬЗОВАНИЕМ ИЛИ НЕВОЗМОЖНОСТЬЮ ИСПОЛЬЗОВАНИЯ ПРОГРАММЫ, В ТОЙ МЕРЕ, В
+   КАКОЙ ЭТО ДОПУСКАЕТ ПРИМЕНИМЫЙ ЗАКОН.
+
+11. Прекращение
+   Лицензия прекращается автоматически при нарушении этого соглашения. После
+   прекращения вы должны удалить все копии Программы.
+
+12. Изменения соглашения
+   Правообладатель может изменить это соглашение; новые условия действуют для
+   версий Программы, выпущенных после изменения.
+
+--------------------------------------------------------------------------------
+
+END USER LICENSE AGREEMENT (EULA)
+Efir — freeware, closed source
+
+Copyright (c) 2026 Red_Artem39. All rights reserved.
+
+By installing, copying or using Efir (the "Software") you accept this
+agreement. If you do not agree, do not install or use the Software.
+
+1. License. The copyright holder grants you, free of charge, a non-exclusive,
+   non-transferable, revocable license to install and use the Software for
+   personal, non-commercial purposes on any number of your devices.
+2. Redistribution. You may give unmodified copies of the official installer
+   to others free of charge. You may not sell the Software, charge for
+   distributing it, distribute modified versions, or bundle it with other
+   products without written permission.
+3. Restrictions. You may not decompile, disassemble or reverse engineer the
+   Software except where applicable law expressly permits it; modify it or
+   create derivative works; remove copyright notices; or use the Software to
+   break the law or infringe the rights of others.
+4. Source code. The source code is closed and is not provided. This
+   agreement grants no rights to it.
+5. Ownership. The Software, including its code, interface and documentation,
+   belongs to the copyright holder. All rights not expressly granted are
+   reserved.
+6. Third-party components. The Software includes open-source components
+   (among them Electron, Chromium, React, mediasoup) under their own
+   licenses, shipped with the Software (LICENSE.electron.txt and
+   LICENSES.chromium.html in the installation folder). For those components
+   their licenses take precedence over this agreement.
+7. Data. The Software connects to the server set at build time and sends it
+   what you send: messages, files, voice and, when sharing, your screen. The
+   server is run by its owner.
+8. Updates. The Software may check for new versions and offer to install
+   them. Updates are covered by this agreement.
+9. No warranty. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+   KIND, EXPRESS OR IMPLIED, INCLUDING FITNESS FOR A PARTICULAR PURPOSE AND
+   NON-INFRINGEMENT.
+10. Limitation of liability. TO THE EXTENT PERMITTED BY APPLICABLE LAW, IN NO
+   EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY DAMAGES, INCLUDING LOSS
+   OF DATA OR PROFITS, ARISING FROM THE USE OF OR INABILITY TO USE THE
+   SOFTWARE.
+11. Termination. The license ends automatically if you breach this
+   agreement; you must then delete all copies of the Software.
+12. Changes. The copyright holder may change this agreement; new terms apply
+   to versions released after the change.
