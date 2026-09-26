@@ -1,0 +1,2938 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Efir Bot API",
+    "version": "1",
+    "description": "Generated from docs/en/bots/rest.md and objects.md: the Markdown docs are the source; this file is their machine-readable form."
+  },
+  "servers": [
+    {
+      "url": "http://{server}:{port}/api/v1",
+      "variables": {
+        "server": {
+          "default": "127.0.0.1"
+        },
+        "port": {
+          "default": "4318"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "bot": []
+    }
+  ],
+  "paths": {
+    "/users/@me": {
+      "get": {
+        "tags": [
+          "Bot Profile"
+        ],
+        "summary": "GET /users/@me",
+        "description": "Bot profile. Response — user.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Bot Profile"
+        ],
+        "summary": "PATCH /users/@me",
+        "description": "Edit profile. Response — user.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`400` — length or format, `409` — username taken.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "display name, 1 to 32 characters"
+                  },
+                  "bio": {
+                    "type": "string",
+                    "description": "\"About me\", up to 190 characters"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "new username: 5–32 characters, Latin letters, digits and `_`, starts with a letter, ends with `_bot`"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/@me/avatar": {
+      "put": {
+        "tags": [
+          "Bot Profile"
+        ],
+        "summary": "PUT /users/@me/avatar",
+        "description": "Body — the file itself: png, jpg, gif, webp, avif or video mp4, mov; up to 8 MB. Optional header `X-Avatar-Crop: {\"x\":0,\"y\":0,\"s\":1}` (URL-encoded) — the square to display: top-left corner and side as fractions of the image, 0 to 1. Response — user.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`400` — empty file or invalid crop, `413` — larger than 8 MB, `415` — format.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Bot Profile"
+        ],
+        "summary": "DELETE /users/@me/avatar",
+        "description": "Remove avatar. Response — user.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "Bot Profile"
+        ],
+        "summary": "GET /users/{id}",
+        "description": "User profile if the bot shares a server with the user, and these servers in `spaces`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`404` — no user or shared servers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers": {
+      "get": {
+        "tags": [
+          "Servers"
+        ],
+        "summary": "GET /servers",
+        "description": "All bot servers, each one — server in full: channels, roles, members, who is in voice.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/servers/{id}": {
+      "get": {
+        "tags": [
+          "Servers"
+        ],
+        "summary": "GET /servers/{id}",
+        "description": "One server. Errors: `404` — no such server, `403` — bot is not a member.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`404` — no such server, `403` — bot is not a member.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Servers"
+        ],
+        "summary": "PATCH /servers/{id}",
+        "description": "Permission: manage server. Response — server.",
+        "x-permission": "manage server",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Server"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "1 to 40 characters"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "truncated to 300 characters"
+                  },
+                  "public": {
+                    "type": "boolean",
+                    "description": "visible in server search, can join without invite"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/join": {
+      "post": {
+        "tags": [
+          "Servers"
+        ],
+        "summary": "POST /join",
+        "description": "Join by invite. Response — `{ \"id\": \"<server id>\" }`.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`404` — invite is invalid or expired, `403` — bot is banned from the server.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "invite code or link containing it, up to 100 characters"
+                  }
+                },
+                "required": [
+                  "code"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers/{id}/leave": {
+      "post": {
+        "tags": [
+          "Servers"
+        ],
+        "summary": "POST /servers/{id}/leave",
+        "description": "Leave server. Body — `{}`. Response — `{ \"ok\": true }`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/servers/{id}/audit-log": {
+      "get": {
+        "tags": [
+          "Servers"
+        ],
+        "summary": "GET /servers/{id}/audit-log",
+        "description": "Permission: view audit log. Response — audit log entries, newest first.",
+        "x-permission": "view audit log",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "only entries before this time"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "1–100, default 50"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditLogEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invites/{code}": {
+      "get": {
+        "tags": [
+          "Servers"
+        ],
+        "summary": "GET /invites/{code}",
+        "description": "About an invite without joining: `{ code, server: { id, name, members, verified } }`. Errors: `404`.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Invites"
+        ],
+        "summary": "DELETE /invites/{code}",
+        "description": "Delete: own — always, someone else's — with Manage Server («Управлять сервером») permission.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/channels/{id}": {
+      "get": {
+        "tags": [
+          "Channels"
+        ],
+        "summary": "GET /channels/{id}",
+        "description": "Channel and the bot's resulting permissions in it (`permissions`).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Channels"
+        ],
+        "summary": "PATCH /channels/{id}",
+        "description": "Permission: manage channels. Response — channel. Send only what you're changing.",
+        "x-permission": "manage channels",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Channel"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "1 to 32 characters"
+                  },
+                  "topic": {
+                    "type": "string",
+                    "description": "text channels only; truncated to 1024"
+                  },
+                  "slowmode": {
+                    "type": "number",
+                    "description": "seconds between messages from one member, 0–21600 (6 hours)"
+                  },
+                  "parent_id": {
+                    "type": "string",
+                    "description": "null"
+                  },
+                  "synced": {
+                    "type": "boolean",
+                    "description": "`true` — inherit category permissions"
+                  },
+                  "bitrate": {
+                    "type": "number",
+                    "description": "kbps, 8–96; voice channels only"
+                  },
+                  "user_limit": {
+                    "type": "number",
+                    "description": "0–25, 0 — no limit (not more than 25); voice channels only"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Channels"
+        ],
+        "summary": "DELETE /channels/{id}",
+        "description": "Permission: manage channels. Response — `{ \"ok\": true }`. Channels of a deleted category remain without a category.",
+        "x-permission": "manage channels",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/servers/{id}/channels": {
+      "post": {
+        "tags": [
+          "Channels"
+        ],
+        "summary": "POST /servers/{id}/channels",
+        "description": "Permission: manage channels. Response — channel. Server has up to 500 channels.",
+        "x-permission": "manage channels",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Channel"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`400` — name, unknown category, 500 channels already exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "1 to 32 characters; for text channels — lowercase, spaces → `-`"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "description": "`text`, `voice` or `category`"
+                  },
+                  "parent_id": {
+                    "type": "string",
+                    "description": "category id"
+                  },
+                  "topic": {
+                    "type": "string",
+                    "description": "topic of text channel, truncated to 1024 characters"
+                  }
+                },
+                "required": [
+                  "name",
+                  "kind"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Channels"
+        ],
+        "summary": "PATCH /servers/{id}/channels",
+        "description": "Order and categories of multiple channels at once. Permission: manage channels. Response — all server channels.",
+        "x-permission": "manage channels",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — not a list, unknown channel, invalid category.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "channels": {
+                    "type": "array",
+                    "description": "`[{ id, position, parent_id }]`"
+                  }
+                },
+                "required": [
+                  "channels"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channels/{id}/permissions/{target}": {
+      "put": {
+        "tags": [
+          "Channels"
+        ],
+        "summary": "PUT /channels/{id}/permissions/{target}",
+        "description": "Special permissions for a role or member. Permission: manage roles; can only grant and deny permissions that the bot has. Response — channel.",
+        "x-permission": "manage roles; can only grant and deny permissions that the bot has",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "target",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Channel"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`404` — no channel, role or member; `403` — permissions the bot doesn't have.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "`role` or `member`"
+                  },
+                  "allow": {
+                    "type": "number",
+                    "description": "allowed permission bits"
+                  },
+                  "deny": {
+                    "type": "number",
+                    "description": "denied permission bits"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Channels"
+        ],
+        "summary": "DELETE /channels/{id}/permissions/{target}",
+        "description": "Remove special permissions. Permission: manage roles. Response — channel.",
+        "x-permission": "manage roles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "target",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Channel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channels/{id}/typing": {
+      "post": {
+        "tags": [
+          "Channels"
+        ],
+        "summary": "POST /channels/{id}/typing",
+        "description": "\"Typing…\" for 10 seconds. Permission: send messages. Body — `{}`.",
+        "x-permission": "send messages",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/channels/{id}/pins": {
+      "get": {
+        "tags": [
+          "Channels"
+        ],
+        "summary": "GET /channels/{id}/pins",
+        "description": "Pinned messages, newest first. Permission: read history.",
+        "x-permission": "read history",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/channels/{id}/messages": {
+      "get": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "GET /channels/{id}/messages",
+        "description": "Messages of the channel, newest at the end. Permission: read history.",
+        "x-permission": "read history",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "only messages before this time — for paging backwards"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "1–100, default 100"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "POST /channels/{id}/messages",
+        "description": "Send message. Permission: send messages (in DM — not needed). Response — message, `201`.",
+        "x-permission": "send messages (in DM — not needed)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "- `403` — no permission to write or attach files; in DM — user blocked the bot or restricted who can message them; - `400` — empty or too long text, someone else's attachment, message to reply to not found; - `429` — message limit or slow mode.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "1 to 4000 characters; formatting"
+                  },
+                  "attachments": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "ids of uploaded files, up to 10; extras are dropped"
+                  },
+                  "reply_to": {
+                    "type": "string",
+                    "description": "id of message from this channel: reply with quote"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channels/{id}/messages/{mid}": {
+      "get": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "GET /channels/{id}/messages/{mid}",
+        "description": "One message. Errors: `404`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messages/{mid}": {
+      "patch": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "PATCH /messages/{mid}",
+        "description": "Edit own message. Response — message.",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`403` — not the bot's message, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "1 to 4000 characters"
+                  }
+                },
+                "required": [
+                  "text"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "DELETE /messages/{mid}",
+        "description": "Delete message: own — always, someone else's — with Manage Messages («Управлять сообщениями») permission. Response — `{ \"ok\": true }`.",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/messages/{mid}/reactions/{emoji}": {
+      "put": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "PUT /messages/{mid}/reactions/{emoji}",
+        "description": "Add reaction. Permission: add reactions. Response — message reactions. `emoji` — one emoji URL-encoded: 👍 → `%F0%9F%91%8D`.",
+        "x-permission": "add reactions",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "emoji",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`400` — not an emoji or multiple, `403`, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "DELETE /messages/{mid}/reactions/{emoji}",
+        "description": "Remove own reaction. Response — message reactions.",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "emoji",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channels/{id}/pins/{mid}": {
+      "put": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "PUT /channels/{id}/pins/{mid}",
+        "description": "Pin or unpin. Permission: manage messages. Channel has up to 50 pins. Response — `{ \"ok\": true }`. Errors: `400` — already 50, `403`, `404`.",
+        "x-permission": "manage messages",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — already 50, `403`, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "DELETE /channels/{id}/pins/{mid}",
+        "description": "Pin or unpin. Permission: manage messages. Channel has up to 50 pins. Response — `{ \"ok\": true }`. Errors: `400` — already 50, `403`, `404`.",
+        "x-permission": "manage messages",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — already 50, `403`, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messages/{mid}/forward": {
+      "post": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "POST /messages/{mid}/forward",
+        "description": "Forward message with attachments. Response — `{ \"ids\": [...] }`, ids of copies in order of chats.",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — not 1–10 chats, forwarding to voice channel or category; `403` — no permission to write or attach files; `404`; `429` — forwarding limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "channel_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "1 to 10 chats the bot can write to"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "description": "goes as separate message before copy; truncated to 4000"
+                  }
+                },
+                "required": [
+                  "channel_ids"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channels/{id}/attachments": {
+      "put": {
+        "tags": [
+          "Files"
+        ],
+        "summary": "PUT /channels/{id}/attachments",
+        "description": "Body — the file itself, `Content-Type` any. Permission: attach files. Response — `{ id, name, kind, size }`, `201`.",
+        "x-permission": "attach files",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "file name; truncated to 120 characters, `/`, `\\` and control characters replaced with `_`"
+          },
+          {
+            "name": "w",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "width and height of image or video: the app will reserve space"
+          },
+          {
+            "name": "h",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "width and height of image or video: the app will reserve space"
+          },
+          {
+            "name": "spoiler",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "1"
+            },
+            "description": "image or video under spoiler: blurred until opened"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — empty file, `403`, `413` — over limit, `507` — server storage full or disk space running out.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/attachments/{id}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "summary": "GET /attachments/{id}",
+        "description": "File content; supports `Range`. Permission: read history in the file's channel. Errors: `404` — no file or deleted, `403`, `416` — invalid `Range`.",
+        "x-permission": "read history in the file's channel",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`404` — no file or deleted, `403`, `416` — invalid `Range`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers/{id}/roles": {
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "GET /servers/{id}/roles",
+        "description": "Server roles, from highest to `@everyone`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "POST /servers/{id}/roles",
+        "description": "Permission: manage roles. New role is placed at the bottom, above `@everyone`. Server has up to 250 roles. Response — role.",
+        "x-permission": "manage roles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "1 to 32 characters"
+                  },
+                  "color": {
+                    "type": "string"
+                  },
+                  "hoist": {
+                    "type": "boolean",
+                    "description": "show as separate group in member list"
+                  },
+                  "permissions": {
+                    "type": "number",
+                    "description": "permission bits"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "PATCH /servers/{id}/roles",
+        "description": "Role order. Body — `{ \"roles\": [{ \"id\", \"position\" }] }`; higher `position` means higher rank. Errors: `400` — not a list, unknown role, invalid position.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — not a list, unknown role, invalid position.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers/{id}/roles/{rid}": {
+      "patch": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "PATCH /servers/{id}/roles/{rid}",
+        "description": "Same fields, all optional. For `@everyone`, only `permissions` change. Response — role. Errors: `403` — role not below bot's highest role or permissions the bot doesn't have; `404`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`403` — role not below bot's highest role or permissions the bot doesn't have; `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "DELETE /servers/{id}/roles/{rid}",
+        "description": "Permission: manage roles. Cannot delete `@everyone`.",
+        "x-permission": "manage roles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/servers/{id}/members/{uid}/roles/{rid}": {
+      "put": {
+        "tags": [
+          "Members"
+        ],
+        "summary": "PUT /servers/{id}/members/{uid}/roles/{rid}",
+        "description": "Grant or revoke role. Permission: manage roles. Response — `{ \"roles\": [...] }`, member's roles. Errors: `403` — role or member not below bot, `404`.",
+        "x-permission": "manage roles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`403` — role or member not below bot, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Members"
+        ],
+        "summary": "DELETE /servers/{id}/members/{uid}/roles/{rid}",
+        "description": "Grant or revoke role. Permission: manage roles. Response — `{ \"roles\": [...] }`, member's roles. Errors: `403` — role or member not below bot, `404`.",
+        "x-permission": "manage roles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`403` — role or member not below bot, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers/{id}/members/{uid}": {
+      "delete": {
+        "tags": [
+          "Members"
+        ],
+        "summary": "DELETE /servers/{id}/members/{uid}",
+        "description": "Kick. Permission: kick members. Body — `{ \"reason\": \"…\" }` (optional, truncated to 512, goes into audit log). Errors: `403` — owner or member not below bot, `404`.",
+        "x-permission": "kick members",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`403` — owner or member not below bot, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers/{id}/members/{uid}/voice": {
+      "patch": {
+        "tags": [
+          "Members"
+        ],
+        "summary": "PATCH /servers/{id}/members/{uid}/voice",
+        "description": "Voice moderation. Response — member's voice state or `{ \"ok\": true }` if not currently in a voice channel (mute and deafen will take effect when joining).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Member"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`400` — moving member not in this server's voice channel; `403` — no permission, member's role not below or no access to channel; `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mute": {
+                    "type": "boolean",
+                    "description": "server mute; persists between sessions — mute members"
+                  },
+                  "deaf": {
+                    "type": "boolean",
+                    "description": "server deafen; persists between sessions — deafen members"
+                  },
+                  "channel_id": {
+                    "type": "string",
+                    "description": "move members — null"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers/{id}/bans": {
+      "get": {
+        "tags": [
+          "Bans"
+        ],
+        "summary": "GET /servers/{id}/bans",
+        "description": "`[{ user_id, user, reason, actor_id, created }]`, newest first.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/servers/{id}/bans/{uid}": {
+      "put": {
+        "tags": [
+          "Bans"
+        ],
+        "summary": "PUT /servers/{id}/bans/{uid}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — the bot itself, `403` — owner or member not below bot, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "description": "truncated to 512"
+                  },
+                  "delete_message_seconds": {
+                    "type": "number",
+                    "description": "delete member messages from last N seconds, 0–604800 (7 days)"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Bans"
+        ],
+        "summary": "DELETE /servers/{id}/bans/{uid}",
+        "description": "Unban.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/servers/{id}/invites": {
+      "get": {
+        "tags": [
+          "Invites"
+        ],
+        "summary": "GET /servers/{id}/invites",
+        "description": "Active invites. Permission: manage server.",
+        "x-permission": "manage server",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Invites"
+        ],
+        "summary": "POST /servers/{id}/invites",
+        "description": "Permission: create invites. Response — `{ code, space_id, creator_id, created, expires, max_uses, uses }`, `201`; `expires` — time in ms or `null`, `max_uses` — number or `null`.",
+        "x-permission": "create invites",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "max_age": {
+                    "type": "number",
+                    "description": "seconds to live, 0–2592000 (30 days); 0 — no expiration; default 604800 (7 days)"
+                  },
+                  "max_uses": {
+                    "type": "number",
+                    "description": "0–1000; 0 — no limit"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channels/{id}/polls": {
+      "post": {
+        "tags": [
+          "Polls"
+        ],
+        "summary": "POST /channels/{id}/polls",
+        "description": "Permission: create polls. Response — `{ id, message_id }`.",
+        "x-permission": "create polls",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "question": {
+                    "type": "string",
+                    "description": "1 to 300 characters"
+                  },
+                  "options": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "2–10 options, each truncated to 100, no repeats"
+                  },
+                  "multiple": {
+                    "type": "boolean",
+                    "description": "can select multiple options"
+                  }
+                },
+                "required": [
+                  "question",
+                  "options"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/polls/{id}/votes": {
+      "put": {
+        "tags": [
+          "Polls"
+        ],
+        "summary": "PUT /polls/{id}/votes",
+        "description": "Vote. Body — `{ \"options\": [0, 2] }`: option indices; empty list removes vote. Response — poll.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Poll"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`400` — poll closed, unknown option, multiple options where only one allowed; `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/polls/{id}/close": {
+      "post": {
+        "tags": [
+          "Polls"
+        ],
+        "summary": "POST /polls/{id}/close",
+        "description": "Close. Can be done by poll author or member with Manage Messages («Управлять сообщениями») permission. Body — `{}`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/channels/{id}/events": {
+      "post": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "POST /channels/{id}/events",
+        "description": "Permission: create events. Response — `{ id, message_id }`.",
+        "x-permission": "create events",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "1 to 100 characters"
+                  },
+                  "starts": {
+                    "type": "number",
+                    "description": "start time, ms; not earlier than a minute ago and not more than 366 days ahead"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "truncated to 1000"
+                  },
+                  "voice_channel_id": {
+                    "type": "string",
+                    "description": "voice channel of this server where participants gather"
+                  }
+                },
+                "required": [
+                  "title",
+                  "starts"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{id}/rsvp": {
+      "put": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "PUT /events/{id}/rsvp",
+        "description": "Body — `{ \"answer\": \"going\" }`: `going`, `not_going` or `null` (remove answer). Response — event.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gateway": {
+      "get": {
+        "tags": [
+          "Miscellaneous"
+        ],
+        "summary": "GET /gateway",
+        "description": "`{ \"url\": \"/api/gateway\", \"heartbeat_interval\": … }` — where to connect for events.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/cosmetics": {
+      "get": {
+        "tags": [
+          "Miscellaneous"
+        ],
+        "summary": "GET /cosmetics",
+        "description": "Profile customization catalog and one item from it (each has `assets[]` with `url`). `404` if the server has no catalog.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/cosmetics/{id}": {
+      "get": {
+        "tags": [
+          "Miscellaneous"
+        ],
+        "summary": "GET /cosmetics/{id}",
+        "description": "Profile customization catalog and one item from it (each has `assets[]` with `url`). `404` if the server has no catalog.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bot": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Bot <token>"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "title": "User",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "numeric id padded with zeros to 9 digits"
+          },
+          "username": {
+            "type": "string",
+            "description": "unique, case-insensitive; case is preserved when displayed"
+          },
+          "name": {
+            "type": "string",
+            "description": "display name, up to 32 characters"
+          },
+          "bio": {
+            "type": "string",
+            "description": "About, up to 190 characters"
+          },
+          "color": {
+            "type": "string",
+            "description": "avatar color without image"
+          },
+          "bot": {
+            "type": "boolean",
+            "description": "is a bot"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "verified by platform owner"
+          },
+          "avatar_media": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "`{ url, kind: \"image\" \\"
+          },
+          "cosmetics": {
+            "type": "object",
+            "description": "profile customization (frame, effect, etc.) if selected"
+          },
+          "created": {
+            "type": "number",
+            "description": "registration time"
+          },
+          "owner": {
+            "type": "boolean",
+            "description": "present only for platform owner, `true`"
+          }
+        }
+      },
+      "Member": {
+        "type": "object",
+        "title": "Member",
+        "properties": {
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "ids of member's roles, without `@everyone`"
+          },
+          "online": {
+            "type": "boolean",
+            "description": "online"
+          },
+          "status": {
+            "type": "string",
+            "description": "`online`, `idle`, `dnd` or `offline`"
+          },
+          "activity": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "\"Playing …\": `{ name, since }`; `null` if nothing"
+          }
+        }
+      },
+      "Server": {
+        "type": "object",
+        "title": "Server",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "up to 40 characters"
+          },
+          "description": {
+            "type": "string",
+            "description": "up to 300 characters"
+          },
+          "owner_id": {
+            "type": "string",
+            "description": "owner"
+          },
+          "public": {
+            "type": "boolean",
+            "description": "visible in server search, can join without invite"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "verified by platform owner"
+          },
+          "created": {
+            "type": "number"
+          },
+          "permissions": {
+            "type": "number",
+            "description": "bot's permissions on server: sum of its roles"
+          },
+          "top": {
+            "type": "number",
+            "description": "position of bot's highest role"
+          },
+          "owned": {
+            "type": "boolean",
+            "description": "bot is owner"
+          },
+          "roles": {
+            "type": "array",
+            "description": "roles, from highest"
+          },
+          "channels": {
+            "type": "array",
+            "description": "channels in display order"
+          },
+          "members": {
+            "type": "array",
+            "description": "members"
+          },
+          "voice_states": {
+            "type": "array",
+            "description": "voice states: who is in voice channels now"
+          }
+        }
+      },
+      "Channel": {
+        "type": "object",
+        "title": "Channel",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "space_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "channel's server; in direct message — `null`"
+          },
+          "name": {
+            "type": "string",
+            "description": "up to 32 characters"
+          },
+          "kind": {
+            "type": "string",
+            "description": "`text`, `voice`, `category`; direct message — `dm`"
+          },
+          "topic": {
+            "type": "string",
+            "description": "topic of text channel, up to 1024 characters"
+          },
+          "parent_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "category or `null`"
+          },
+          "position": {
+            "type": "number",
+            "description": "order within category"
+          },
+          "slowmode": {
+            "type": "number",
+            "description": "seconds between messages from one member, 0 — off"
+          },
+          "synced": {
+            "type": "boolean",
+            "description": "special permissions inherited from category"
+          },
+          "bitrate": {
+            "type": "number",
+            "description": "voice: kbps, 8–96"
+          },
+          "user_limit": {
+            "type": "number",
+            "description": "voice: 0 — up to 25 members"
+          },
+          "overwrites": {
+            "type": "array",
+            "description": "special permissions: `{ type: \"role\" \\"
+          },
+          "permissions": {
+            "type": "number",
+            "description": "bot's resulting permissions in this channel"
+          }
+        }
+      },
+      "Role": {
+        "type": "object",
+        "title": "Role",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "for `@everyone` equals server id"
+          },
+          "space_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "up to 32 characters"
+          },
+          "color": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "`#rrggbb` or `null`"
+          },
+          "hoist": {
+            "type": "boolean",
+            "description": "display separately in member list"
+          },
+          "permissions": {
+            "type": "number",
+            "description": "permission bits"
+          },
+          "position": {
+            "type": "number",
+            "description": "higher value, higher position; for `@everyone` — 0"
+          },
+          "everyone": {
+            "type": "boolean",
+            "description": "is `@everyone`"
+          },
+          "created": {
+            "type": "number"
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "title": "Message",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "channel_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "author"
+          },
+          "username": {
+            "type": "string",
+            "description": "author"
+          },
+          "name": {
+            "type": "string",
+            "description": "author"
+          },
+          "bot": {
+            "type": "boolean",
+            "description": "author is bot; author has verification"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "author is bot; author has verification"
+          },
+          "text": {
+            "type": "string",
+            "description": "up to 4000 characters, formatting; empty string — attachments only"
+          },
+          "created": {
+            "type": "number"
+          },
+          "edited": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "last edit time"
+          },
+          "pinned": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "time of pinning"
+          },
+          "reply_to": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "id of message this replies to"
+          },
+          "reply": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "that message: `{ id, channel_id, created, user_id, name, username, text, files }`, first 200 characters of text; `{ id, deleted: true }` if deleted"
+          },
+          "forward": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "forwarded from: `{ message_id, created, user, server?, channel? }`; for forwarded event or poll it's inside `event` or `poll`"
+          },
+          "attachments": {
+            "type": "array",
+            "description": "attachments"
+          },
+          "embeds": {
+            "type": "array",
+            "description": "link previews: `{ url, type: \"link\" \\"
+          },
+          "reactions": {
+            "type": "array",
+            "description": "`{ emoji, count, mine }`; `mine` — 1 if bot added this reaction"
+          },
+          "event": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "event in this message"
+          },
+          "poll": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "poll in this message"
+          }
+        }
+      },
+      "Attachment": {
+        "type": "object",
+        "title": "Attachment",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "up to 120 characters"
+          },
+          "mime": {
+            "type": "string",
+            "description": "type by content"
+          },
+          "kind": {
+            "type": "string",
+            "description": "`image`, `video`, `audio` or `file`"
+          },
+          "size": {
+            "type": "number",
+            "description": "bytes"
+          },
+          "width": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "image or video size if provided on upload"
+          },
+          "height": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "image or video size if provided on upload"
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "from server root; `null` if file deleted"
+          },
+          "expired": {
+            "type": "boolean",
+            "description": "file deleted: no one opened it for 30 days"
+          },
+          "spoiler": {
+            "const": true,
+            "description": "image or video with spoiler; absent if not spoiler"
+          },
+          "variant": {
+            "type": "string",
+            "description": "voice message (`voice`) or round video (`round`) from app; absent for regular files"
+          },
+          "duration": {
+            "type": "number",
+            "description": "duration in seconds; absent for regular files"
+          },
+          "waveform": {
+            "type": "string",
+            "description": "64 bytes of volume in base64; present only for `voice`"
+          }
+        }
+      },
+      "VoiceState": {
+        "type": "object",
+        "title": "Voice state",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "who and in which voice channel"
+          },
+          "channel_id": {
+            "type": "string",
+            "description": "who and in which voice channel"
+          },
+          "self_mute": {
+            "type": "boolean",
+            "description": "muted microphone or sound themselves"
+          },
+          "self_deaf": {
+            "type": "boolean",
+            "description": "muted microphone or sound themselves"
+          },
+          "mute": {
+            "type": "boolean",
+            "description": "muted by moderator"
+          },
+          "deaf": {
+            "type": "boolean",
+            "description": "muted by moderator"
+          },
+          "speaking": {
+            "type": "boolean",
+            "description": "speaking right now"
+          },
+          "streaming": {
+            "type": "boolean",
+            "description": "sharing screen"
+          },
+          "stream_audio": {
+            "type": "boolean",
+            "description": "stream with audio"
+          },
+          "stream_quality": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "stream quality"
+          },
+          "stream_viewers": {
+            "type": "number",
+            "description": "stream viewers count"
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "title": "Event",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "message_id": {
+            "type": "string"
+          },
+          "channel_id": {
+            "type": "string"
+          },
+          "server_id": {
+            "type": "string"
+          },
+          "creator_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "up to 100 characters"
+          },
+          "description": {
+            "type": "string",
+            "description": "up to 1000 characters"
+          },
+          "starts": {
+            "type": "number",
+            "description": "start time"
+          },
+          "voice_channel": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "`{ id, name }` — where to gather"
+          },
+          "going": {
+            "type": "number",
+            "description": "number going"
+          },
+          "attendees": {
+            "type": "array",
+            "description": "first 8 going, users"
+          },
+          "mine": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "bot's response: `going`, `not_going` or `null`"
+          }
+        }
+      },
+      "Poll": {
+        "type": "object",
+        "title": "Poll",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "message_id": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string",
+            "description": "up to 300 characters"
+          },
+          "multiple": {
+            "type": "boolean",
+            "description": "can select multiple options"
+          },
+          "closed": {
+            "type": "boolean",
+            "description": "poll closed"
+          },
+          "voters": {
+            "type": "number",
+            "description": "number of people who voted"
+          },
+          "options": {
+            "type": "array",
+            "description": "`{ text, votes }`, 2–10 options; array index — vote number"
+          },
+          "mine": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "indices that bot voted for"
+          },
+          "can_close": {
+            "type": "boolean",
+            "description": "bot can close poll"
+          }
+        }
+      },
+      "AuditLogEntry": {
+        "type": "object",
+        "title": "Audit log",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "space_id": {
+            "type": "string"
+          },
+          "actor_id": {
+            "type": "string",
+            "description": "who did it"
+          },
+          "actor": {
+            "type": "string",
+            "description": "who did it"
+          },
+          "action": {
+            "type": "string",
+            "description": "what was done, for example `SERVER_UPDATE`, `MEMBER_KICK`, `MEMBER_BAN_ADD`, `INVITE_CREATE`"
+          },
+          "target_type": {
+            "type": "string",
+            "description": "what on: `server`, `channel`, `role`, `member`, `invite`, …"
+          },
+          "target_id": {
+            "type": "string",
+            "description": "what on: `server`, `channel`, `role`, `member`, `invite`, …"
+          },
+          "target": {
+            "description": "present if target is member"
+          },
+          "changes": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "`{ field: { old, new } }`"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "reason, up to 512 characters"
+          },
+          "created": {
+            "type": "number"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "retry_after": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      }
+    }
+  }
+}

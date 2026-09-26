@@ -22,7 +22,7 @@ curl -H "Authorization: Bot $EFIR_TOKEN" http://<сервер>:4318/api/v1/users
 
 How to read the sections below:
 
-- **Permission** — which [permission](#permissions) a bot needs on the server or in the channel.
+- **Permission** — which [permission](objects.md#permissions) a bot needs on the server or in the channel.
   "—" — nothing needed except access to the server or channel.
 - In parameter tables, "yes" in the "Required" column — mandatory parameter, others can be
   omitted.
@@ -47,7 +47,7 @@ that long and retry the request. Libraries do this automatically.
 
 ### `GET /users/@me`
 
-Bot profile. Response — [user](#user).
+Bot profile. Response — [user](objects.md#user).
 
 ### `PATCH /users/@me`
 
@@ -83,7 +83,7 @@ Errors: `404` — no user or shared servers.
 
 ### `GET /servers`
 
-All bot servers, each one — [server](#server) in full: channels, roles, members,
+All bot servers, each one — [server](objects.md#server) in full: channels, roles, members,
 who is in voice.
 
 ### `GET /servers/{id}`
@@ -116,7 +116,7 @@ Leave server. Body — `{}`. Response — `{ "ok": true }`.
 
 ### `GET /servers/{id}/audit-log`
 
-Permission: view audit log. Response — [audit log entries](#audit-log),
+Permission: view audit log. Response — [audit log entries](objects.md#audit-log),
 newest first.
 
 | Query parameter | Type | Description |
@@ -133,7 +133,7 @@ Errors: `404`.
 
 ### `GET /channels/{id}`
 
-[Channel](#channel) and the bot's resulting permissions in it (`permissions`).
+[Channel](objects.md#channel) and the bot's resulting permissions in it (`permissions`).
 
 ### `POST /servers/{id}/channels`
 
@@ -210,7 +210,7 @@ Pinned messages, newest first. Permission: read history.
 
 ### `GET /channels/{id}/messages`
 
-[Messages](#message) of the channel, newest at the end. Permission: read history.
+[Messages](objects.md#message) of the channel, newest at the end. Permission: read history.
 
 | Query parameter | Type | Description |
 | --- | --- | --- |
@@ -352,14 +352,14 @@ Server roles, from highest to `@everyone`.
 ### `POST /servers/{id}/roles`
 
 Permission: manage roles. New role is placed at the bottom, above `@everyone`. Server has up to 250
-roles. Response — [role](#role).
+roles. Response — [role](objects.md#role).
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `name` | string | yes | 1 to 32 characters |
 | `color` | string \| null | | `#rrggbb`; anything else — no color |
 | `hoist` | boolean | | show as separate group in member list |
-| `permissions` | number | | [permission bits](#permissions) |
+| `permissions` | number | | [permission bits](objects.md#permissions) |
 
 ### `PATCH /servers/{id}/roles/{rid}`
 
@@ -461,7 +461,7 @@ Permission: create polls. Response — `{ id, message_id }`.
 
 ### `PUT /polls/{id}/votes`
 
-Vote. Body — `{ "options": [0, 2] }`: option indices; empty list removes vote. Response — [poll](#poll).
+Vote. Body — `{ "options": [0, 2] }`: option indices; empty list removes vote. Response — [poll](objects.md#poll).
 
 Errors: `400` — poll closed, unknown option, multiple options where only one allowed; `404`.
 
@@ -488,7 +488,7 @@ Permission: create events. Response — `{ id, message_id }`.
 ### `PUT /events/{id}/rsvp`
 
 Body — `{ "answer": "going" }`: `going`, `not_going` or `null` (remove answer). Response —
-[event](#event).
+[event](objects.md#event).
 
 ## Miscellaneous
 

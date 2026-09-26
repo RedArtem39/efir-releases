@@ -1,0 +1,2917 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Efir Bot API",
+    "version": "1",
+    "description": "Собрано из docs/bots/rest.md и objects.md: источник — документация в Markdown, этот файл — её машиночитаемый вид."
+  },
+  "servers": [
+    {
+      "url": "http://{server}:{port}/api/v1",
+      "variables": {
+        "server": {
+          "default": "127.0.0.1"
+        },
+        "port": {
+          "default": "4318"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "bot": []
+    }
+  ],
+  "paths": {
+    "/users/@me": {
+      "get": {
+        "tags": [
+          "Профиль бота"
+        ],
+        "summary": "GET /users/@me",
+        "description": "Профиль бота. Ответ — пользователь.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Профиль бота"
+        ],
+        "summary": "PATCH /users/@me",
+        "description": "Изменить профиль. Ответ — пользователь.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`400` — длина или формат, `409` — юзернейм занят.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "отображаемое имя, от 1 до 32 символов"
+                  },
+                  "bio": {
+                    "type": "string",
+                    "description": "«Обо мне», до 190 символов"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "новый юзернейм: 5–32 символа, латиница, цифры и `_`, с буквы, на `_bot`"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/@me/avatar": {
+      "put": {
+        "tags": [
+          "Профиль бота"
+        ],
+        "summary": "PUT /users/@me/avatar",
+        "description": "Тело — сам файл: png, jpg, gif, webp, avif или видео mp4, mov; до 8 МБ. Необязательный заголовок `X-Avatar-Crop: {\"x\":0,\"y\":0,\"s\":1}` (в URL-кодировке) — квадрат, который виден: левый верхний угол и сторона в долях картинки, от 0 до 1. Ответ — пользователь.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`400` — пустой файл или неверная обрезка, `413` — больше 8 МБ, `415` — формат.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Профиль бота"
+        ],
+        "summary": "DELETE /users/@me/avatar",
+        "description": "Убрать аватар. Ответ — пользователь.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "Профиль бота"
+        ],
+        "summary": "GET /users/{id}",
+        "description": "Профиль пользователя, с которым у бота есть общий сервер, и эти серверы в `spaces`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`404` — нет пользователя или общих серверов.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers": {
+      "get": {
+        "tags": [
+          "Серверы"
+        ],
+        "summary": "GET /servers",
+        "description": "Все серверы бота, каждый — сервер целиком: каналы, роли, участники, кто в голосовых.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/servers/{id}": {
+      "get": {
+        "tags": [
+          "Серверы"
+        ],
+        "summary": "GET /servers/{id}",
+        "description": "Один сервер. Ошибки: `404` — нет такого сервера, `403` — бот не участник.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`404` — нет такого сервера, `403` — бот не участник.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Серверы"
+        ],
+        "summary": "PATCH /servers/{id}",
+        "description": "Право: управлять сервером. Ответ — сервер.",
+        "x-permission": "управлять сервером",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Server"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "от 1 до 40 символов"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "обрезается до 300 символов"
+                  },
+                  "public": {
+                    "type": "boolean",
+                    "description": "виден в поиске серверов, вступить можно без приглашения"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/join": {
+      "post": {
+        "tags": [
+          "Серверы"
+        ],
+        "summary": "POST /join",
+        "description": "Вступить по приглашению. Ответ — `{ \"id\": \"<id сервера>\" }`.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`404` — приглашение недействительно или истекло, `403` — бот забанен на сервере.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "код приглашения или ссылка с ним, до 100 символов"
+                  }
+                },
+                "required": [
+                  "code"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers/{id}/leave": {
+      "post": {
+        "tags": [
+          "Серверы"
+        ],
+        "summary": "POST /servers/{id}/leave",
+        "description": "Покинуть сервер. Тело — `{}`. Ответ — `{ \"ok\": true }`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/servers/{id}/audit-log": {
+      "get": {
+        "tags": [
+          "Серверы"
+        ],
+        "summary": "GET /servers/{id}/audit-log",
+        "description": "Право: просматривать журнал аудита. Ответ — записи журнала, новые первыми.",
+        "x-permission": "просматривать журнал аудита",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "только записи раньше этого времени"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "1–100, по умолчанию 50"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditLogEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invites/{code}": {
+      "get": {
+        "tags": [
+          "Серверы"
+        ],
+        "summary": "GET /invites/{code}",
+        "description": "Что за приглашение, не вступая: `{ code, server: { id, name, members, verified } }`. Ошибки: `404`.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Приглашения"
+        ],
+        "summary": "DELETE /invites/{code}",
+        "description": "Удалить: своё — всегда, чужое — с правом «Управлять сервером».",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/channels/{id}": {
+      "get": {
+        "tags": [
+          "Каналы"
+        ],
+        "summary": "GET /channels/{id}",
+        "description": "Канал и итоговые права бота в нём (`permissions`).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Каналы"
+        ],
+        "summary": "PATCH /channels/{id}",
+        "description": "Право: управлять каналами. Ответ — канал. Передавайте только то, что меняете.",
+        "x-permission": "управлять каналами",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Channel"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "от 1 до 32 символов"
+                  },
+                  "topic": {
+                    "type": "string",
+                    "description": "только у текстовых; обрезается до 1024"
+                  },
+                  "slowmode": {
+                    "type": "number",
+                    "description": "секунды между сообщениями одного участника, 0–21600 (6 часов)"
+                  },
+                  "parent_id": {
+                    "type": "string",
+                    "description": "null"
+                  },
+                  "synced": {
+                    "type": "boolean",
+                    "description": "`true` — взять права категории"
+                  },
+                  "bitrate": {
+                    "type": "number",
+                    "description": "кбит/с, 8–96; только у голосовых"
+                  },
+                  "user_limit": {
+                    "type": "number",
+                    "description": "0–25, 0 — без ограничения (не больше 25); только у голосовых"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Каналы"
+        ],
+        "summary": "DELETE /channels/{id}",
+        "description": "Право: управлять каналами. Ответ — `{ \"ok\": true }`. Каналы удалённой категории остаются без категории.",
+        "x-permission": "управлять каналами",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/servers/{id}/channels": {
+      "post": {
+        "tags": [
+          "Каналы"
+        ],
+        "summary": "POST /servers/{id}/channels",
+        "description": "Право: управлять каналами. Ответ — канал. На сервере — до 500 каналов.",
+        "x-permission": "управлять каналами",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Channel"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`400` — название, неизвестная категория, 500 каналов уже есть.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "от 1 до 32 символов; у текстовых — в нижнем регистре, пробелы → `-`"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "description": "`text`, `voice` или `category`"
+                  },
+                  "parent_id": {
+                    "type": "string",
+                    "description": "id категории"
+                  },
+                  "topic": {
+                    "type": "string",
+                    "description": "тема текстового канала, обрезается до 1024 символов"
+                  }
+                },
+                "required": [
+                  "name",
+                  "kind"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Каналы"
+        ],
+        "summary": "PATCH /servers/{id}/channels",
+        "description": "Порядок и категории нескольких каналов сразу. Право: управлять каналами. Ответ — все каналы сервера.",
+        "x-permission": "управлять каналами",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — не список, неизвестный канал, неверная категория.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "channels": {
+                    "type": "array",
+                    "description": "`[{ id, position, parent_id }]`"
+                  }
+                },
+                "required": [
+                  "channels"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channels/{id}/permissions/{target}": {
+      "put": {
+        "tags": [
+          "Каналы"
+        ],
+        "summary": "PUT /channels/{id}/permissions/{target}",
+        "description": "Особые права для роли или участника. Право: управлять ролями; давать и запрещать можно только те права, что есть у самого бота. Ответ — канал.",
+        "x-permission": "управлять ролями; давать и запрещать можно",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "target",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Channel"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`404` — нет канала, роли или участника; `403` — права, которых нет у бота.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "`role` или `member`"
+                  },
+                  "allow": {
+                    "type": "number",
+                    "description": "разрешённые биты прав"
+                  },
+                  "deny": {
+                    "type": "number",
+                    "description": "запрещённые биты прав"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Каналы"
+        ],
+        "summary": "DELETE /channels/{id}/permissions/{target}",
+        "description": "Убрать особые права. Право: управлять ролями. Ответ — канал.",
+        "x-permission": "управлять ролями",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "target",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Channel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channels/{id}/typing": {
+      "post": {
+        "tags": [
+          "Каналы"
+        ],
+        "summary": "POST /channels/{id}/typing",
+        "description": "«Печатает…» на 10 секунд. Право: отправлять сообщения. Тело — `{}`.",
+        "x-permission": "отправлять сообщения",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/channels/{id}/pins": {
+      "get": {
+        "tags": [
+          "Каналы"
+        ],
+        "summary": "GET /channels/{id}/pins",
+        "description": "Закреплённые сообщения, новые первыми. Право: читать историю.",
+        "x-permission": "читать историю",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/channels/{id}/messages": {
+      "get": {
+        "tags": [
+          "Сообщения"
+        ],
+        "summary": "GET /channels/{id}/messages",
+        "description": "Сообщения канала, новые в конце. Право: читать историю.",
+        "x-permission": "читать историю",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "только сообщения раньше этого времени — для листания назад"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "1–100, по умолчанию 100"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Сообщения"
+        ],
+        "summary": "POST /channels/{id}/messages",
+        "description": "Отправить сообщение. Право: отправлять сообщения (в личке — не нужно). Ответ — сообщение, `201`.",
+        "x-permission": "отправлять сообщения (в личке — не нужно)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "- `403` — нет права писать или прикреплять файлы; в личке — человек заблокировал бота или ограничил, кто может ему писать; - `400` — пустой или слишком длинный текст, чужое вложение, сообщение для ответа не найдено; - `429` — лимит сообщений или медленный режим.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "от 1 до 4000 символов; разметка"
+                  },
+                  "attachments": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "id загруженных файлов, до 10; остальные отбрасываются"
+                  },
+                  "reply_to": {
+                    "type": "string",
+                    "description": "id сообщения из этого же канала: ответ с цитатой"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channels/{id}/messages/{mid}": {
+      "get": {
+        "tags": [
+          "Сообщения"
+        ],
+        "summary": "GET /channels/{id}/messages/{mid}",
+        "description": "Одно сообщение. Ошибки: `404`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messages/{mid}": {
+      "patch": {
+        "tags": [
+          "Сообщения"
+        ],
+        "summary": "PATCH /messages/{mid}",
+        "description": "Изменить своё сообщение. Ответ — сообщение.",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`403` — сообщение не бота, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "от 1 до 4000 символов"
+                  }
+                },
+                "required": [
+                  "text"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Сообщения"
+        ],
+        "summary": "DELETE /messages/{mid}",
+        "description": "Удалить сообщение: своё — всегда, чужое — с правом «Управлять сообщениями». Ответ — `{ \"ok\": true }`.",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/messages/{mid}/reactions/{emoji}": {
+      "put": {
+        "tags": [
+          "Сообщения"
+        ],
+        "summary": "PUT /messages/{mid}/reactions/{emoji}",
+        "description": "Поставить реакцию. Право: добавлять реакции. Ответ — реакции сообщения. `emoji` — один эмодзи в URL-кодировке: 👍 → `%F0%9F%91%8D`.",
+        "x-permission": "добавлять реакции",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "emoji",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — не эмодзи или несколько, `403`, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Сообщения"
+        ],
+        "summary": "DELETE /messages/{mid}/reactions/{emoji}",
+        "description": "Убрать свою реакцию. Ответ — реакции сообщения.",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "emoji",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/channels/{id}/pins/{mid}": {
+      "put": {
+        "tags": [
+          "Сообщения"
+        ],
+        "summary": "PUT /channels/{id}/pins/{mid}",
+        "description": "Закрепить или открепить. Право: управлять сообщениями. В канале — до 50 закрепов. Ответ — `{ \"ok\": true }`. Ошибки: `400` — уже 50, `403`, `404`.",
+        "x-permission": "управлять сообщениями",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — уже 50, `403`, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Сообщения"
+        ],
+        "summary": "DELETE /channels/{id}/pins/{mid}",
+        "description": "Закрепить или открепить. Право: управлять сообщениями. В канале — до 50 закрепов. Ответ — `{ \"ok\": true }`. Ошибки: `400` — уже 50, `403`, `404`.",
+        "x-permission": "управлять сообщениями",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — уже 50, `403`, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messages/{mid}/forward": {
+      "post": {
+        "tags": [
+          "Сообщения"
+        ],
+        "summary": "POST /messages/{mid}/forward",
+        "description": "Переслать сообщение с вложениями. Ответ — `{ \"ids\": [...] }`, id копий по порядку чатов.",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — не 1–10 чатов, пересылка в голосовой канал или категорию; `403` — нет права писать или прикреплять файлы; `404`; `429` — лимит пересылок.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "channel_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "от 1 до 10 чатов, куда бот может писать"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "description": "уходит отдельным сообщением перед копией; обрезается до 4000"
+                  }
+                },
+                "required": [
+                  "channel_ids"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channels/{id}/attachments": {
+      "put": {
+        "tags": [
+          "Файлы"
+        ],
+        "summary": "PUT /channels/{id}/attachments",
+        "description": "Тело — сам файл, `Content-Type` любой. Право: прикреплять файлы. Ответ — `{ id, name, kind, size }`, `201`.",
+        "x-permission": "прикреплять файлы",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "имя файла; обрезается до 120 символов, `/`, `\\` и управляющие символы заменяются на `_`"
+          },
+          {
+            "name": "w",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "ширина и высота картинки или видео: приложение сразу оставит под них место"
+          },
+          {
+            "name": "h",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "ширина и высота картинки или видео: приложение сразу оставит под них место"
+          },
+          {
+            "name": "spoiler",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "1"
+            },
+            "description": "картинка или видео под спойлером: размыты, пока их не откроют"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — пустой файл, `403`, `413` — больше лимита, `507` — хранилище сервера заполнено или на диске кончается место.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/attachments/{id}": {
+      "get": {
+        "tags": [
+          "Файлы"
+        ],
+        "summary": "GET /attachments/{id}",
+        "description": "Содержимое файла; поддерживает `Range`. Право: читать историю в канале файла. Ошибки: `404` — нет файла или он удалён, `403`, `416` — неверный `Range`.",
+        "x-permission": "читать историю в канале файла",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`404` — нет файла или он удалён, `403`, `416` — неверный `Range`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers/{id}/roles": {
+      "get": {
+        "tags": [
+          "Роли"
+        ],
+        "summary": "GET /servers/{id}/roles",
+        "description": "Роли сервера, от высшей к `@everyone`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Роли"
+        ],
+        "summary": "POST /servers/{id}/roles",
+        "description": "Право: управлять ролями. Новая роль встаёт внизу, над `@everyone`. На сервере — до 250 ролей. Ответ — роль.",
+        "x-permission": "управлять ролями",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "от 1 до 32 символов"
+                  },
+                  "color": {
+                    "type": "string"
+                  },
+                  "hoist": {
+                    "type": "boolean",
+                    "description": "показывать отдельной группой в списке участников"
+                  },
+                  "permissions": {
+                    "type": "number",
+                    "description": "биты прав"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Роли"
+        ],
+        "summary": "PATCH /servers/{id}/roles",
+        "description": "Порядок ролей. Тело — `{ \"roles\": [{ \"id\", \"position\" }] }`; чем больше `position`, тем выше. Ошибки: `400` — не список, неизвестная роль, неверная позиция.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — не список, неизвестная роль, неверная позиция.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers/{id}/roles/{rid}": {
+      "patch": {
+        "tags": [
+          "Роли"
+        ],
+        "summary": "PATCH /servers/{id}/roles/{rid}",
+        "description": "Те же поля, все необязательные. У `@everyone` меняются только `permissions`. Ответ — роль. Ошибки: `403` — роль не ниже высшей роли бота или права, которых нет у бота; `404`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`403` — роль не ниже высшей роли бота или права, которых нет у бота; `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Роли"
+        ],
+        "summary": "DELETE /servers/{id}/roles/{rid}",
+        "description": "Право: управлять ролями. `@everyone` удалить нельзя.",
+        "x-permission": "управлять ролями",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/servers/{id}/members/{uid}/roles/{rid}": {
+      "put": {
+        "tags": [
+          "Участники"
+        ],
+        "summary": "PUT /servers/{id}/members/{uid}/roles/{rid}",
+        "description": "Выдать или снять роль. Право: управлять ролями. Ответ — `{ \"roles\": [...] }`, роли участника. Ошибки: `403` — роль или участник не ниже бота, `404`.",
+        "x-permission": "управлять ролями",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`403` — роль или участник не ниже бота, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Участники"
+        ],
+        "summary": "DELETE /servers/{id}/members/{uid}/roles/{rid}",
+        "description": "Выдать или снять роль. Право: управлять ролями. Ответ — `{ \"roles\": [...] }`, роли участника. Ошибки: `403` — роль или участник не ниже бота, `404`.",
+        "x-permission": "управлять ролями",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`403` — роль или участник не ниже бота, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers/{id}/members/{uid}": {
+      "delete": {
+        "tags": [
+          "Участники"
+        ],
+        "summary": "DELETE /servers/{id}/members/{uid}",
+        "description": "Выгнать. Право: выгонять участников. Тело — `{ \"reason\": \"…\" }` (необязательно, обрезается до 512, попадает в журнал аудита). Ошибки: `403` — владелец или участник не ниже бота, `404`.",
+        "x-permission": "выгонять участников",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`403` — владелец или участник не ниже бота, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers/{id}/members/{uid}/voice": {
+      "patch": {
+        "tags": [
+          "Участники"
+        ],
+        "summary": "PATCH /servers/{id}/members/{uid}/voice",
+        "description": "Модерация голоса. Ответ — голосовое состояние участника или `{ \"ok\": true }`, если он сейчас не в голосовом (мьют и заглушение сработают, когда он зайдёт).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — перемещение участника, который не в голосовом канале этого сервера; `403` — нет права, роль участника не ниже или у него нет доступа к каналу; `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mute": {
+                    "type": "boolean",
+                    "description": "серверный мьют; сохраняется между заходами — отключать микрофон участникам"
+                  },
+                  "deaf": {
+                    "type": "boolean",
+                    "description": "серверное заглушение; сохраняется между заходами — отключать звук участникам"
+                  },
+                  "channel_id": {
+                    "type": "string",
+                    "description": "перемещать участников — null"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servers/{id}/bans": {
+      "get": {
+        "tags": [
+          "Баны"
+        ],
+        "summary": "GET /servers/{id}/bans",
+        "description": "`[{ user_id, user, reason, actor_id, created }]`, новые первыми.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/servers/{id}/bans/{uid}": {
+      "put": {
+        "tags": [
+          "Баны"
+        ],
+        "summary": "PUT /servers/{id}/bans/{uid}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "`400` — сам бот, `403` — владелец или участник не ниже бота, `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "description": "обрезается до 512"
+                  },
+                  "delete_message_seconds": {
+                    "type": "number",
+                    "description": "удалить сообщения участника за последние N секунд, 0–604800 (7 дней)"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Баны"
+        ],
+        "summary": "DELETE /servers/{id}/bans/{uid}",
+        "description": "Разбанить.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/servers/{id}/invites": {
+      "get": {
+        "tags": [
+          "Приглашения"
+        ],
+        "summary": "GET /servers/{id}/invites",
+        "description": "Действующие приглашения. Право: управлять сервером.",
+        "x-permission": "управлять сервером",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Приглашения"
+        ],
+        "summary": "POST /servers/{id}/invites",
+        "description": "Право: создавать приглашения. Ответ — `{ code, space_id, creator_id, created, expires, max_uses, uses }`, `201`; `expires` — время в мс или `null`, `max_uses` — число или `null`.",
+        "x-permission": "создавать приглашения",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "max_age": {
+                    "type": "number",
+                    "description": "секунды жизни, 0–2592000 (30 дней); 0 — бессрочно; по умолчанию 604800 (7 дней)"
+                  },
+                  "max_uses": {
+                    "type": "number",
+                    "description": "0–1000; 0 — без ограничения"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channels/{id}/polls": {
+      "post": {
+        "tags": [
+          "Опросы"
+        ],
+        "summary": "POST /channels/{id}/polls",
+        "description": "Право: создавать опросы. Ответ — `{ id, message_id }`.",
+        "x-permission": "создавать опросы",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "question": {
+                    "type": "string",
+                    "description": "от 1 до 300 символов"
+                  },
+                  "options": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "2–10 вариантов, каждый обрезается до 100, без повторов"
+                  },
+                  "multiple": {
+                    "type": "boolean",
+                    "description": "можно выбрать несколько вариантов"
+                  }
+                },
+                "required": [
+                  "question",
+                  "options"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/polls/{id}/votes": {
+      "put": {
+        "tags": [
+          "Опросы"
+        ],
+        "summary": "PUT /polls/{id}/votes",
+        "description": "Проголосовать. Тело — `{ \"options\": [0, 2] }`: индексы вариантов; пустой список отменяет голос. Ответ — опрос.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Poll"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "`400` — опрос завершён, неизвестный вариант, несколько вариантов там, где можно один; `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/polls/{id}/close": {
+      "post": {
+        "tags": [
+          "Опросы"
+        ],
+        "summary": "POST /polls/{id}/close",
+        "description": "Завершить. Может автор опроса или участник с правом «Управлять сообщениями». Тело — `{}`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/channels/{id}/events": {
+      "post": {
+        "tags": [
+          "События"
+        ],
+        "summary": "POST /channels/{id}/events",
+        "description": "Право: создавать события. Ответ — `{ id, message_id }`.",
+        "x-permission": "создавать события",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "от 1 до 100 символов"
+                  },
+                  "starts": {
+                    "type": "number",
+                    "description": "время начала, мс; не раньше чем минуту назад и не дальше чем через 366 дней"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "обрезается до 1000"
+                  },
+                  "voice_channel_id": {
+                    "type": "string",
+                    "description": "голосовой канал этого же сервера, где соберутся"
+                  }
+                },
+                "required": [
+                  "title",
+                  "starts"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{id}/rsvp": {
+      "put": {
+        "tags": [
+          "События"
+        ],
+        "summary": "PUT /events/{id}/rsvp",
+        "description": "Тело — `{ \"answer\": \"going\" }`: `going`, `not_going` или `null` (убрать ответ). Ответ — событие.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gateway": {
+      "get": {
+        "tags": [
+          "Прочее"
+        ],
+        "summary": "GET /gateway",
+        "description": "`{ \"url\": \"/api/gateway\", \"heartbeat_interval\": … }` — куда подключаться за событиями.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/cosmetics": {
+      "get": {
+        "tags": [
+          "Прочее"
+        ],
+        "summary": "GET /cosmetics",
+        "description": "Каталог оформления профилей и один предмет из него (у каждого `assets[]` есть `url`). `404`, если на сервере каталога нет.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/cosmetics/{id}": {
+      "get": {
+        "tags": [
+          "Прочее"
+        ],
+        "summary": "GET /cosmetics/{id}",
+        "description": "Каталог оформления профилей и один предмет из него (у каждого `assets[]` есть `url`). `404`, если на сервере каталога нет.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bot": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Bot <токен>"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "title": "Пользователь",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "числовой id, дополненный нулями до 9 знаков"
+          },
+          "username": {
+            "type": "string",
+            "description": "уникальный, без учёта регистра; регистр при показе сохраняется"
+          },
+          "name": {
+            "type": "string",
+            "description": "отображаемое имя, до 32 символов"
+          },
+          "bio": {
+            "type": "string",
+            "description": "«Обо мне», до 190 символов"
+          },
+          "color": {
+            "type": "string",
+            "description": "цвет аватара без картинки"
+          },
+          "bot": {
+            "type": "boolean",
+            "description": "это бот"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "галочка от владельца платформы"
+          },
+          "avatar_media": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "`{ url, kind: \"image\" \\"
+          },
+          "cosmetics": {
+            "type": "object",
+            "description": "оформление профиля (рамка, эффект и т. п.), если выбрано"
+          },
+          "created": {
+            "type": "number",
+            "description": "время регистрации"
+          },
+          "owner": {
+            "type": "boolean",
+            "description": "есть только у владельца платформы, `true`"
+          }
+        }
+      },
+      "Member": {
+        "type": "object",
+        "title": "Участник",
+        "properties": {
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "id ролей участника, без `@everyone`"
+          },
+          "online": {
+            "type": "boolean",
+            "description": "в сети"
+          },
+          "status": {
+            "type": "string",
+            "description": "`online`, `idle`, `dnd` или `offline`"
+          },
+          "activity": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "«Играет в …»: `{ name, since }`; `null`, если ничего"
+          }
+        }
+      },
+      "Server": {
+        "type": "object",
+        "title": "Сервер",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "до 40 символов"
+          },
+          "description": {
+            "type": "string",
+            "description": "до 300 символов"
+          },
+          "owner_id": {
+            "type": "string",
+            "description": "владелец"
+          },
+          "public": {
+            "type": "boolean",
+            "description": "виден в поиске серверов, вступить можно без приглашения"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "галочка от владельца платформы"
+          },
+          "created": {
+            "type": "number"
+          },
+          "permissions": {
+            "type": "number",
+            "description": "права бота на сервере: сумма его ролей"
+          },
+          "top": {
+            "type": "number",
+            "description": "позиция высшей роли бота"
+          },
+          "owned": {
+            "type": "boolean",
+            "description": "бот — владелец"
+          },
+          "roles": {
+            "type": "array",
+            "description": "роли, от высшей"
+          },
+          "channels": {
+            "type": "array",
+            "description": "каналы в порядке показа"
+          },
+          "members": {
+            "type": "array",
+            "description": "участники"
+          },
+          "voice_states": {
+            "type": "array",
+            "description": "голосовые состояния: кто сейчас в голосовых каналах"
+          }
+        }
+      },
+      "Channel": {
+        "type": "object",
+        "title": "Канал",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "space_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "сервер канала; у личного чата — `null`"
+          },
+          "name": {
+            "type": "string",
+            "description": "до 32 символов"
+          },
+          "kind": {
+            "type": "string",
+            "description": "`text`, `voice`, `category`; личный чат — `dm`"
+          },
+          "topic": {
+            "type": "string",
+            "description": "тема текстового канала, до 1024 символов"
+          },
+          "parent_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "категория или `null`"
+          },
+          "position": {
+            "type": "number",
+            "description": "порядок внутри категории"
+          },
+          "slowmode": {
+            "type": "number",
+            "description": "секунды между сообщениями одного участника, 0 — выключено"
+          },
+          "synced": {
+            "type": "boolean",
+            "description": "особые права берутся у категории"
+          },
+          "bitrate": {
+            "type": "number",
+            "description": "голосовой: кбит/с, 8–96"
+          },
+          "user_limit": {
+            "type": "number",
+            "description": "голосовой: 0 — до 25 человек"
+          },
+          "overwrites": {
+            "type": "array",
+            "description": "особые права: `{ type: \"role\" \\"
+          },
+          "permissions": {
+            "type": "number",
+            "description": "итоговые права бота в этом канале"
+          }
+        }
+      },
+      "Role": {
+        "type": "object",
+        "title": "Роль",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "у `@everyone` равен id сервера"
+          },
+          "space_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "до 32 символов"
+          },
+          "color": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "`#rrggbb` или `null`"
+          },
+          "hoist": {
+            "type": "boolean",
+            "description": "показывать отдельной группой в списке участников"
+          },
+          "permissions": {
+            "type": "number",
+            "description": "биты прав"
+          },
+          "position": {
+            "type": "number",
+            "description": "чем больше, тем выше; у `@everyone` — 0"
+          },
+          "everyone": {
+            "type": "boolean",
+            "description": "это `@everyone`"
+          },
+          "created": {
+            "type": "number"
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "title": "Сообщение",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "channel_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "автор"
+          },
+          "username": {
+            "type": "string",
+            "description": "автор"
+          },
+          "name": {
+            "type": "string",
+            "description": "автор"
+          },
+          "bot": {
+            "type": "boolean",
+            "description": "автор — бот; у автора галочка"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "автор — бот; у автора галочка"
+          },
+          "text": {
+            "type": "string",
+            "description": "до 4000 символов, разметка; пустая строка — только вложения"
+          },
+          "created": {
+            "type": "number"
+          },
+          "edited": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "время последней правки"
+          },
+          "pinned": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "время закрепления"
+          },
+          "reply_to": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "id сообщения, на которое это ответ"
+          },
+          "reply": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "то сообщение: `{ id, channel_id, created, user_id, name, username, text, files }`, первые 200 символов текста; `{ id, deleted: true }`, если его удалили"
+          },
+          "forward": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "откуда переслано: `{ message_id, created, user, server?, channel? }`; у пересланного события или опроса внутри `event` или `poll`"
+          },
+          "attachments": {
+            "type": "array",
+            "description": "вложения"
+          },
+          "embeds": {
+            "type": "array",
+            "description": "превью ссылок: `{ url, type: \"link\" \\"
+          },
+          "reactions": {
+            "type": "array",
+            "description": "`{ emoji, count, mine }`; `mine` — 1, если реакцию поставил сам бот"
+          },
+          "event": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "событие в этом сообщении"
+          },
+          "poll": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "опрос в этом сообщении"
+          }
+        }
+      },
+      "Attachment": {
+        "type": "object",
+        "title": "Вложение",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "до 120 символов"
+          },
+          "mime": {
+            "type": "string",
+            "description": "тип по содержимому"
+          },
+          "kind": {
+            "type": "string",
+            "description": "`image`, `video`, `audio` или `file`"
+          },
+          "size": {
+            "type": "number",
+            "description": "байты"
+          },
+          "width": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "размер картинки или видео, если его передали при загрузке"
+          },
+          "height": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "размер картинки или видео, если его передали при загрузке"
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "от корня сервера; `null`, если файл удалён"
+          },
+          "expired": {
+            "type": "boolean",
+            "description": "файл удалён: его никто не открывал 30 дней"
+          },
+          "spoiler": {
+            "const": true,
+            "description": "картинка или видео под спойлером; поля нет, если не спойлер"
+          },
+          "variant": {
+            "type": "string",
+            "description": "голосовое сообщение (`voice`) или кружочек (`round`) из приложения; поля нет у обычных файлов"
+          },
+          "duration": {
+            "type": "number",
+            "description": "длительность в секундах; поля нет у обычных файлов"
+          },
+          "waveform": {
+            "type": "string",
+            "description": "64 байта громкости в base64; поля нет у всего, кроме `voice`"
+          }
+        }
+      },
+      "VoiceState": {
+        "type": "object",
+        "title": "Голосовое состояние",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "кто и в каком голосовом канале"
+          },
+          "channel_id": {
+            "type": "string",
+            "description": "кто и в каком голосовом канале"
+          },
+          "self_mute": {
+            "type": "boolean",
+            "description": "выключил микрофон или звук сам"
+          },
+          "self_deaf": {
+            "type": "boolean",
+            "description": "выключил микрофон или звук сам"
+          },
+          "mute": {
+            "type": "boolean",
+            "description": "выключено модератором"
+          },
+          "deaf": {
+            "type": "boolean",
+            "description": "выключено модератором"
+          },
+          "speaking": {
+            "type": "boolean",
+            "description": "говорит прямо сейчас"
+          },
+          "streaming": {
+            "type": "boolean",
+            "description": "показывает экран"
+          },
+          "stream_audio": {
+            "type": "boolean",
+            "description": "трансляция со звуком"
+          },
+          "stream_quality": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "качество трансляции"
+          },
+          "stream_viewers": {
+            "type": "number",
+            "description": "сколько смотрят трансляцию"
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "title": "Событие",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "message_id": {
+            "type": "string"
+          },
+          "channel_id": {
+            "type": "string"
+          },
+          "server_id": {
+            "type": "string"
+          },
+          "creator_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "до 100 символов"
+          },
+          "description": {
+            "type": "string",
+            "description": "до 1000 символов"
+          },
+          "starts": {
+            "type": "number",
+            "description": "время начала"
+          },
+          "voice_channel": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "`{ id, name }` — где собираются"
+          },
+          "going": {
+            "type": "number",
+            "description": "сколько идут"
+          },
+          "attendees": {
+            "type": "array",
+            "description": "первые 8 идущих, пользователи"
+          },
+          "mine": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "ответ бота: `going`, `not_going` или `null`"
+          }
+        }
+      },
+      "Poll": {
+        "type": "object",
+        "title": "Опрос",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "message_id": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string",
+            "description": "до 300 символов"
+          },
+          "multiple": {
+            "type": "boolean",
+            "description": "можно выбрать несколько вариантов"
+          },
+          "closed": {
+            "type": "boolean",
+            "description": "опрос завершён"
+          },
+          "voters": {
+            "type": "number",
+            "description": "сколько человек проголосовало"
+          },
+          "options": {
+            "type": "array",
+            "description": "`{ text, votes }`, 2–10 вариантов; индекс в массиве — номер для голосования"
+          },
+          "mine": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "индексы, за которые голосовал бот"
+          },
+          "can_close": {
+            "type": "boolean",
+            "description": "бот может завершить опрос"
+          }
+        }
+      },
+      "AuditLogEntry": {
+        "type": "object",
+        "title": "Журнал аудита",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "space_id": {
+            "type": "string"
+          },
+          "actor_id": {
+            "type": "string",
+            "description": "кто сделал"
+          },
+          "actor": {
+            "type": "string",
+            "description": "кто сделал"
+          },
+          "action": {
+            "type": "string",
+            "description": "что сделано, например `SERVER_UPDATE`, `MEMBER_KICK`, `MEMBER_BAN_ADD`, `INVITE_CREATE`"
+          },
+          "target_type": {
+            "type": "string",
+            "description": "над чем: `server`, `channel`, `role`, `member`, `invite`, …"
+          },
+          "target_id": {
+            "type": "string",
+            "description": "над чем: `server`, `channel`, `role`, `member`, `invite`, …"
+          },
+          "target": {
+            "description": "есть, если цель — участник"
+          },
+          "changes": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "`{ поле: { old, new } }`"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "причина, до 512 символов"
+          },
+          "created": {
+            "type": "number"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "retry_after": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      }
+    }
+  }
+}
