@@ -56,7 +56,7 @@ certutil -hashfile Efir-Setup-<версия>.exe SHA256
 
 Ботов можно писать на любом языке через Bot API; для Node.js и Python есть библиотеки:
 `npm install efir-bot`, `pip install efir-bot`. Документация, правила и примеры — в
-[docs](docs/README.md).
+[docs](docs/README.md). Developer documentation in English: [docs/en](docs/en/README.md).
 
 ## Лицензия
 

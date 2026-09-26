@@ -148,5 +148,5 @@ WebSocket, по которому бот узнаёт обо всём, что п�
 
 ## Пример без библиотеки
 
-Node.js 22+, без зависимостей — [`echo-bot.mjs`](../examples/echo-bot.mjs):
+Node.js 22+, без зависимостей — [`echo-bot.mjs`](https://github.com/RedArtem39/efir-releases/blob/main/docs/examples/echo-bot.mjs):
 подключение, heartbeat, `!ping` → `pong`, эхо в личке, переподключение.

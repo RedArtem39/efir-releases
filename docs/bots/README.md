@@ -8,7 +8,10 @@
 - [Библиотека для Python](python.md) — то же для Python: `pip install efir-bot`
 - [HTTP API](rest.md) — каждый запрос, для любого языка, с примерами через curl
 - [Шлюз событий](gateway.md) — WebSocket и все события
-- [Объекты и права](objects.md) — сообщение, сервер, канал, роль, биты прав
+- [Объекты и права](objects.md) — каждое поле с типом, биты прав
+- [Ошибки](errors.md) — все статусы и тексты ошибок с причинами
+- [Частые проблемы](troubleshooting.md) — бот не подключается, молчит, не хватает прав
+- [История изменений](changelog.md) — что менялось в API
 
 ## Создать бота
 
@@ -180,4 +183,4 @@ await bot.servers.join("Kx7pQ2aB"); // Python: await bot.servers.join("Kx7pQ2aB"
 | `429` | лимит, см. выше |
 | `507` | на сервере кончилось место для файлов |
 
-Примеры — в [examples](../examples) и в самих пакетах (папка `examples`): пинг, кубик, модерация, опрос по расписанию. Что можно и чего нельзя — в [правилах](../rules.md).
+Примеры — [на GitHub](https://github.com/RedArtem39/efir-releases/tree/main/docs/examples) и в самих пакетах (папка `examples`): пинг, кубик, модерация, опрос по расписанию. Что можно и чего нельзя — в [правилах](https://github.com/RedArtem39/efir-releases/blob/main/docs/rules.md).

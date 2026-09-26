@@ -9,7 +9,12 @@ Telegram и Discord. Само приложение и сервер закрыт�
 - **[Библиотека для Python](bots/python.md)** — `pip install efir-bot`.
 - **[HTTP API](bots/rest.md)** — каждый запрос, для любого языка, с примерами через curl.
 - **[Шлюз событий](bots/gateway.md)** — WebSocket и все события.
-- **[Объекты и права](bots/objects.md)** — сообщение, сервер, канал, роль, биты прав.
+- **[Объекты и права](bots/objects.md)** — каждое поле с типом, биты прав.
+- **[Ошибки](bots/errors.md)** — все статусы и тексты ошибок с причинами.
+- **[Частые проблемы](bots/troubleshooting.md)** — бот не подключается, молчит, не хватает прав.
+- **[История изменений](bots/changelog.md)** — что менялось в API.
+
+English version: [en/README.md](en/README.md).
 
 ## Где что взять
 
