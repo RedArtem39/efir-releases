@@ -6,6 +6,14 @@
 Здесь выходят установщики. Исходный код закрыт; условия использования — в
 [LICENSE](LICENSE).
 
+| | |
+| --- | --- |
+| Последняя версия | [Releases → latest](../../releases/latest) |
+| Скачать | `Efir-Setup-<версия>.exe` на странице последнего релиза; Windows 10 и 11, 64 бита |
+| Документация | [docs](docs/README.md) · [English](docs/en/README.md) |
+| Bot API | [HTTP API](docs/bots/rest.md) · `npm install efir-bot` · `pip install efir-bot` |
+| Лицензия | бесплатно, код закрыт — [LICENSE](LICENSE); библиотеки для ботов — MIT |
+
 ## Скачать
 
 Последняя версия — на странице [Releases](../../releases/latest): файл

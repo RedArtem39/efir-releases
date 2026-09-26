@@ -7,11 +7,13 @@
 new one. Libraries in this case stop with `EfirError`, `status` 401, and do not
 reconnect.
 
-**Connection is not established (timeout, "connection refused").** Efir server is accessible
-only inside the Radmin VPN network. The machine where the bot runs must be in this network. Check:
+**Connection is not established (timeout, "connection refused").** A server may be reachable
+only inside a private network: for example, the main Efir server is currently reachable only
+inside the Radmin VPN network. Then the machine where the bot runs must be in the same
+network. Check:
 
 ```
-curl http://<сервер>:4318/api/v1/gateway
+curl http://<server>:4318/api/v1/gateway
 ```
 
 Response `{"error":"…"}` with status 401 — server is accessible, the issue is with the token. Timeout — no

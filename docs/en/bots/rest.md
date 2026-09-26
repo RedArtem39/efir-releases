@@ -8,7 +8,7 @@ curl, and you can write a bot in any language. For Node.js and Python, it's easi
 
 | | |
 | --- | --- |
-| Address | `http://<server>:4318/api/v1/…` |
+| Address | `http://<server>:<port>/api/v1/…` — the server owner gives the address and port; the default port is `4318` |
 | Authorization | header `Authorization: Bot <token>` |
 | Request body | JSON with `Content-Type: application/json`, up to 24,000 bytes; for file uploads — the file itself |
 | Response | JSON; on error — HTTP status and `{ "error": "text" }` |

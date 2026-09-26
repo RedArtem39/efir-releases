@@ -25,7 +25,15 @@ Russian version: [../README.md](../README.md).
 | Other languages | direct HTTP requests: [HTTP API](bots/rest.md) and [event gateway](bots/gateway.md) |
 | Examples | [examples](../examples): [Node.js](../examples/nodejs), [Python](../examples/python), [without library](../examples/echo-bot.mjs) |
 | Bot token | direct message to `@bot_bot` in the application, command `/newbot` |
-| Server address | from the server owner; the same one the application connects to, port `4318` |
+| Server address | from the server owner: the same one the application connects to; default port `4318` |
 
-Server is available in the Radmin VPN network, as it is for the application: the bot must run on a machine
-that is connected to it.
+## Platform and a particular server
+
+Efir is a program that can be installed on any server. Everything in this documentation —
+the API, limits, permissions, events — is the same on every Efir server. Only the address,
+the port (`4318` by default) and how the server is reached depend on a particular
+installation.
+
+The main Efir server is currently reachable only inside the Radmin VPN network: the bot,
+like the application, must run on a machine connected to it. This is a property of that
+installation, not of the API.
