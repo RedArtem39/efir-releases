@@ -4,8 +4,9 @@
 управляет ваш код. Интерфейса для ботов в приложении нет — всё через `@bot_bot` и API.
 
 - [Быстрый старт](#быстрый-старт) — бот за пять минут
-- [Библиотека efir-bot](library.md) — всё API в методах, для Node.js
-- [HTTP API](rest.md) — каждый запрос, для любого языка
+- [Библиотека для Node.js](library.md) — всё API в методах: `npm install efir-bot`
+- [Библиотека для Python](python.md) — то же для Python: `pip install efir-bot`
+- [HTTP API](rest.md) — каждый запрос, для любого языка, с примерами через curl
 - [Шлюз событий](gateway.md) — WebSocket и все события
 - [Объекты и права](objects.md) — сообщение, сервер, канал, роль, биты прав
 
@@ -31,10 +32,16 @@
 
 ## Быстрый старт
 
-Нужен Node.js 22 или новее. Библиотека не тянет зависимостей и ставится из релиза:
+Библиотеки есть для Node.js и Python; на любом другом языке бот работает прямыми
+HTTP-запросами. Бот ниже отвечает `pong` на `/ping`, бросает кубик на `/roll 20` и
+повторяет то, что ему пишут в личку.
+
+### Node.js
+
+Node.js 22 или новее, без зависимостей:
 
 ```
-npm install https://github.com/RedArtem39/efir-releases/releases/download/v0.5.5/efir-bot-1.0.0.tgz
+npm install efir-bot
 ```
 
 `bot.mjs`:
@@ -66,10 +73,73 @@ console.log(`Бот @${me.username} в сети`);
 EFIR_TOKEN=<токен> node bot.mjs
 ```
 
+Справочник — [библиотека для Node.js](library.md).
+
+### Python
+
+Python 3.10 или новее:
+
+```
+pip install efir-bot
+```
+
+`bot.py`:
+
+```python
+import os
+import random
+
+from efir_bot import Bot
+
+bot = Bot(os.environ["EFIR_TOKEN"], "http://<сервер>:4318")
+
+
+@bot.command("ping")
+async def ping(msg):
+    await msg.reply("pong")
+
+
+@bot.command("roll")
+async def roll(msg, args):
+    top = int(args[0]) if args and args[0].isdigit() else 100
+    await msg.reply(f"Выпало {random.randint(1, top)}")
+
+
+@bot.on("message")
+async def talk(msg):
+    if msg.dm and not msg.text.startswith("/"):
+        await msg.send(f"Вы написали: {msg.text}")
+
+
+bot.run()
+```
+
+```
+EFIR_TOKEN=<токен> python bot.py
+```
+
+Справочник — [библиотека для Python](python.md).
+
+### Любой другой язык
+
+Всё, что умеет бот, — обычные HTTP-запросы с заголовком `Authorization: Bot <токен>`.
+Проверить токен и отправить сообщение можно прямо из консоли:
+
+```
+curl -H "Authorization: Bot $EFIR_TOKEN" http://<сервер>:4318/api/v1/users/@me
+
+curl -X POST http://<сервер>:4318/api/v1/channels/$CHANNEL/messages \
+  -H "Authorization: Bot $EFIR_TOKEN" -H "Content-Type: application/json" \
+  -d '{"text":"Привет"}'
+```
+
+Новые сообщения и остальные события приходят по WebSocket — [шлюз событий](gateway.md),
+там же пример бота без библиотеки. Все запросы — в [HTTP API](rest.md).
+
 Чтобы бот появился на сервере, дайте ему приглашение:
 
 ```js
-await bot.servers.join("Kx7pQ2aB");
+await bot.servers.join("Kx7pQ2aB"); // Python: await bot.servers.join("Kx7pQ2aB")
 ```
 
 Дальше участники сервера выдают боту роли, как человеку. Всё, что он может, решают права
@@ -110,4 +180,4 @@ await bot.servers.join("Kx7pQ2aB");
 | `429` | лимит, см. выше |
 | `507` | на сервере кончилось место для файлов |
 
-Примеры лежат в пакете, в папке `node_modules/efir-bot/examples`: пинг, кубик, модерация, опрос по расписанию. Что можно и чего нельзя — в [правилах](../rules.md).
+Примеры — в [examples](../examples) и в самих пакетах (папка `examples`): пинг, кубик, модерация, опрос по расписанию. Что можно и чего нельзя — в [правилах](../rules.md).

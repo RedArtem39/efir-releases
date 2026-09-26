@@ -1,7 +1,12 @@
-# Библиотека efir-bot
+# Библиотека для Node.js
 
 Всё HTTP API и шлюз событий в одном классе. Node.js 22+, без зависимостей, с типами
-для TypeScript и подсказок в редакторе.
+для TypeScript и подсказок в редакторе. Для Python — [своя библиотека](python.md) с теми же
+возможностями.
+
+```
+npm install efir-bot
+```
 
 ```js
 import { Bot, Permissions, hasPermission, EfirError } from "efir-bot";

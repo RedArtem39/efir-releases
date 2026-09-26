@@ -1,12 +1,13 @@
 # Документация для разработчиков
 
-Эфир открыт для ботов: у бота свой аккаунт и HTTP API с событиями по WebSocket, как у
+Эфир открыт для ботов: у бота свой аккаунт, HTTP API и события по WebSocket, как у
 Telegram и Discord. Само приложение и сервер закрыты, но всё, что нужно боту, описано здесь.
 
 - **[Правила](rules.md)** — что можно и чего нельзя.
-- **[Боты: быстрый старт](bots/README.md)** — создать бота через `@bot_bot` и запустить за пять минут.
-- **[Библиотека efir-bot](bots/library.md)** — всё API в методах, для Node.js 22+.
-- **[HTTP API](bots/rest.md)** — каждый запрос, для любого языка.
+- **[Боты: быстрый старт](bots/README.md)** — создать бота через `@bot_bot` и запустить: Node.js, Python или curl.
+- **[Библиотека для Node.js](bots/library.md)** — `npm install efir-bot`.
+- **[Библиотека для Python](bots/python.md)** — `pip install efir-bot`.
+- **[HTTP API](bots/rest.md)** — каждый запрос, для любого языка, с примерами через curl.
 - **[Шлюз событий](bots/gateway.md)** — WebSocket и все события.
 - **[Объекты и права](bots/objects.md)** — сообщение, сервер, канал, роль, биты прав.
 
@@ -14,8 +15,10 @@ Telegram и Discord. Само приложение и сервер закрыт�
 
 | Что | Где |
 | --- | --- |
-| Библиотека `efir-bot` | файл `efir-bot-1.0.0.tgz` в [релизах](../../../releases); `npm install https://github.com/RedArtem39/efir-releases/releases/download/v0.5.5/efir-bot-1.0.0.tgz` |
-| Примеры ботов | в пакете, `node_modules/efir-bot/examples`; без библиотеки — [`examples/echo-bot.mjs`](examples/echo-bot.mjs) |
+| Библиотека для Node.js 22+ | `npm install efir-bot` |
+| Библиотека для Python 3.10+ | `pip install efir-bot` |
+| Другие языки | прямые HTTP-запросы: [HTTP API](bots/rest.md) и [шлюз событий](bots/gateway.md) |
+| Примеры | [examples](examples): [Node.js](examples/nodejs), [Python](examples/python), [без библиотеки](examples/echo-bot.mjs) |
 | Токен бота | личка `@bot_bot` в приложении, команда `/newbot` |
 | Адрес сервера | у владельца сервера; тот же, к которому подключается приложение, порт `4318` |
 
