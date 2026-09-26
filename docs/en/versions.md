@@ -30,9 +30,9 @@ Version in the address: `/api/v1/…`. Inside `v1`:
 - new restrictions (limits, lengths) can only appear if the server cannot be protected without them;
   they will appear in the [changelog](bots/changelog.md) on the same day.
 
-Incompatible changes will be released as `v2` at new addresses (`/api/v2/…`), and `v1` will work
-alongside for at least three months. This will be written in the changelog and in the release
-in advance.
+Incompatible changes will be released as `v2` at new addresses (`/api/v2/…`), and `v1` will keep
+working alongside for a while. When `v2` appears and how long `v1` lives after that is not
+decided yet; it will be announced in advance in the changelog and in the release.
 
 What `v1` does not promise: the order of fields in JSON, error messages (rely on the status), and that
 the response has no fields beyond those described.
