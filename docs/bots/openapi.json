@@ -2626,6 +2626,13 @@
               "null"
             ],
             "description": "опрос в этом сообщении"
+          },
+          "call": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "звонок в личке: `{ id, caller_id, started, answered, ended, duration, state }`; `state` — `ringing`, `active`, `ended`, `missed` или `declined`, `duration` — секунды разговора"
           }
         }
       },

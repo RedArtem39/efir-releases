@@ -6,6 +6,8 @@ it will appear here in advance and in a new version of addresses.
 
 ## 2026-09-26
 
+- Message: the `call` field — a call in a direct chat (bots take no part in calls but see such messages in the history).
+
 - `efir-bot` library for Python (`pip install efir-bot`); library for Node.js — in npm
   (`npm install efir-bot`).
 - Attachments: `spoiler=1` on upload sends image or video with spoiler; such

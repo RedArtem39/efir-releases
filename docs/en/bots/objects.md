@@ -196,6 +196,7 @@ User on server (in `members` of [server](#server)): user fields and also
 | `reactions` | array | `{ emoji, count, mine }`; `mine` — 1 if bot added this reaction |
 | `event` | object? | [event](#event) in this message |
 | `poll` | object? | [poll](#poll) in this message |
+| `call` | object? | a call in a direct chat: `{ id, caller_id, started, answered, ended, duration, state }`; `state` is `ringing`, `active`, `ended`, `missed` or `declined`, `duration` is seconds of talk |
 
 In gateway events messages come with `server_id` (or `null` in direct messages) and `dm`.
 In libraries `reply` and `forward` are called `repliedTo` / `replied_to` and `forwardedFrom` /

@@ -196,6 +196,7 @@
 | `reactions` | массив | `{ emoji, count, mine }`; `mine` — 1, если реакцию поставил сам бот |
 | `event` | объект? | [событие](#событие) в этом сообщении |
 | `poll` | объект? | [опрос](#опрос) в этом сообщении |
+| `call` | объект? | звонок в личке: `{ id, caller_id, started, answered, ended, duration, state }`; `state` — `ringing`, `active`, `ended`, `missed` или `declined`, `duration` — секунды разговора |
 
 В событиях шлюза сообщение приходит вместе с `server_id` (или `null` в личке) и `dm`.
 В библиотеках `reply` и `forward` называются `repliedTo` / `replied_to` и `forwardedFrom` /

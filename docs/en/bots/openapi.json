@@ -2647,6 +2647,13 @@
               "null"
             ],
             "description": "poll in this message"
+          },
+          "call": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "a call in a direct chat: `{ id, caller_id, started, answered, ended, duration, state }`; `state` is `ringing`, `active`, `ended`, `missed` or `declined`, `duration` is seconds of talk"
           }
         }
       },
